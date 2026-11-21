@@ -1,0 +1,3 @@
+# Never run uploaded files as PHP
+php_flag engine off
+Options -Indexes

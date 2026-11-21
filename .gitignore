@@ -1,0 +1,9 @@
+config.php
+database.sql
+.idea/
+.env
+*.log
+vendor/
+assets/uploads/candidates/*.jpg
+assets/uploads/candidates/*.jpeg
+assets/uploads/candidates/*.png
