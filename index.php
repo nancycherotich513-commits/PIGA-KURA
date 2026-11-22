@@ -41,8 +41,8 @@ render_head('Welcome', 'public');
                 <h2>Welcome back, voter</h2>
                 <form method="post" action="<?= e(url('auth/voter_login.php')) ?>" class="form">
                     <?= csrf_field() ?>
-                    <label>Email
-                        <input type="email" name="email" required autocomplete="email">
+                    <label>Voter ID or email
+                        <input type="text" name="identifier" required autocomplete="username">
                     </label>
                     <label>Password
                         <input type="password" name="password" required autocomplete="current-password">

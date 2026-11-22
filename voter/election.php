@@ -11,6 +11,8 @@ if ($voter['status'] !== 'approved') { flash('error', 'Your account must be appr
 
 $pageUrl = 'voter/election.php?id=' . $electionId;
 $status = election_status($election);
+$electionName = mb_strtoupper(trim($election['title']));
+if (!str_contains($electionName, 'ELECTION')) $electionName .= ' ELECTIONS';
 if ($status === 'closed') {
     if (!empty($election['results_published_at'])) redirect('voter/results.php?id=' . $electionId);
     flash('info', 'Voting is closed. Results will appear after the administrator publishes them.');
@@ -107,6 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['ballot_reviews'][$electionId]);
         $_SESSION['voter_receipts'][$electionId] = $receiptCode;
         flash('success', 'Vote submitted. Participation receipt: ' . $receiptCode);
+        if (count($already) + $saved >= count($ballot)) {
+            redirect('voter/dashboard.php?election_id=' . $electionId . '&voted=1');
+        }
         redirect($pageUrl . '&receipt=1');
     }
 
@@ -123,7 +128,7 @@ render_head($election['title'], 'voter');
     <div><h1><?= e($election['title']) ?></h1>
         <?php if (!empty($election['description'])): ?><p><?= e($election['description']) ?></p><?php endif; ?>
         <p>Opens <?= e(format_when($election['start_at'])) ?> · Closes <?= e(format_when($election['end_at'])) ?></p>
-    </div><?= status_badge($status) ?>
+    </div><div class="actions"><?= status_badge($status) ?><?php if ($status === 'live' && $ballot && count($votedPositions) < count($ballot)): ?><a class="btn btn-primary btn-sm" href="#ballot"><?= $votedPositions ? 'Continue voting' : 'Start voting' ?></a><?php endif; ?></div>
 </div>
 <?php if ($receiptCode && $votedPositions): ?>
 <section class="card receipt-card"><h2>Vote submitted</h2>
@@ -131,7 +136,10 @@ render_head($election['title'], 'voter');
 <div class="receipt-code-label">Participation receipt</div><code class="receipt-code"><?= e($receiptCode) ?></code>
 <p class="hint">Save this code for your records.</p></section>
 <?php endif; ?>
-<?php if ($status === 'upcoming'): ?><div class="notice">Voting has not opened yet. You can preview the candidates below.</div><?php endif; ?>
+<?php if ($status === 'closed'): ?>
+<div class="notice" role="status">This election is closed. Ballot choices are no longer available.</div>
+<?php else: ?>
+<?php if ($status === 'upcoming'): ?><div class="notice"><?= e($electionName) ?> have not started. Voting opens <?= e(format_when($election['start_at'])) ?>.</div><?php endif; ?>
 <?php if ($votedPositions): ?><div class="notice voter-status" role="status">You have voted in <?= count($votedPositions) ?> of <?= count($ballot) ?> positions. Your choices are hidden for privacy.</div><?php endif; ?>
 
 <?php if ($showReview): ?>
@@ -142,7 +150,7 @@ render_head($election['title'], 'voter');
 <div class="actions review-actions"><a class="btn btn-ghost" href="<?= e(url($pageUrl)) ?>">Edit choices</a>
 <form method="post" action="<?= e(url($pageUrl)) ?>"><?= csrf_field() ?><input type="hidden" name="election_id" value="<?= $electionId ?>"><input type="hidden" name="action" value="confirm"><input type="hidden" name="review_token" value="<?= e($review['token']) ?>"><button class="btn btn-primary" data-confirm="Submit this ballot? Your choices cannot be changed afterwards.">Confirm and submit vote</button></form></div></section>
 <?php else: ?>
-<form method="post" action="<?= e(url($pageUrl)) ?>" class="ballot"><?= csrf_field() ?><input type="hidden" name="election_id" value="<?= $electionId ?>"><input type="hidden" name="action" value="review">
+<form id="ballot" method="post" action="<?= e(url($pageUrl)) ?>" class="ballot"><?= csrf_field() ?><input type="hidden" name="election_id" value="<?= $electionId ?>"><input type="hidden" name="action" value="review">
 <?php if (!$ballot): ?><div class="card empty">No positions have been set up for this election yet.</div><?php endif; ?>
 <?php foreach ($ballot as $position): $positionId=(int)$position['id']; $hasVoted=isset($votedPositions[$positionId]); ?>
 <section class="position"><div class="position-head"><h2><?= e($position['title']) ?></h2><?php if($hasVoted): ?><span class="badge badge-approved">✓ Vote recorded</span><?php endif; ?></div>
@@ -154,5 +162,6 @@ render_head($election['title'], 'voter');
 <?php endforeach; ?></div><?php endif; ?></section>
 <?php endforeach; ?>
 <?php if($status==='live'&&$ballot&&count($votedPositions)<count($ballot)): ?><div class="submit-bar"><p>Select a candidate for each position you want to vote in now, review your choices, then confirm. You can return for remaining positions before voting closes.</p><button class="btn btn-primary btn-lg">Next</button></div><?php endif; ?></form>
+<?php endif; ?>
 <?php endif; ?>
 <?php render_foot(); ?>

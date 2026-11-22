@@ -50,10 +50,30 @@
   if (countdown) {
     var secondsLeft = Math.max(0, parseInt(countdown.getAttribute('data-countdown-seconds'), 10) || 0);
     var updateCountdown = function () {
-      countdown.textContent = String(Math.ceil(secondsLeft / 60));
+      var minutesLeft = Math.ceil(secondsLeft / 60);
+      var hours = Math.floor(minutesLeft / 60);
+      var minutes = minutesLeft % 60;
+      countdown.textContent = hours > 0 ? hours + 'h ' + minutes + 'm' : minutesLeft + 'm';
       if (secondsLeft > 0) secondsLeft -= 1;
     };
     updateCountdown();
     window.setInterval(updateCountdown, 1000);
   }
+
+  // Copy a voter participation receipt without exposing ballot choices.
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest('[data-copy-target]');
+    if (!button) return;
+    var input = document.querySelector(button.getAttribute('data-copy-target'));
+    if (!input) return;
+    input.select();
+    input.setSelectionRange(0, input.value.length);
+    var copied = navigator.clipboard && window.isSecureContext
+      ? navigator.clipboard.writeText(input.value)
+      : Promise.resolve(document.execCommand('copy'));
+    Promise.resolve(copied).then(function () {
+      button.textContent = 'Copied';
+      window.setTimeout(function () { button.textContent = button.getAttribute('data-copy-label') || 'Copy code'; }, 1600);
+    });
+  });
 })();

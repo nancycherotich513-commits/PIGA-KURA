@@ -921,4 +921,112 @@ body.area-public .login-submit:hover { color:#fff; background:#d92332; }
 body.area-admin .nav a.nav-logout,body.area-voter .nav a.nav-logout { color:#fff; background:#ef3340; }
 body.area-admin .nav a.nav-logout:hover,body.area-voter .nav a.nav-logout:hover { color:#fff; background:#d92332; }
 @media(max-width:760px) { .voter-banner-button { width:100%; margin-left:26px; } }
+
+/* Keep primary actions consistent: purple at rest, bright red on hover. */
+:root { --action-red:#ef3340; }
+.btn-danger { color:#fff; background:var(--action-red); box-shadow:none; }
+.btn-danger:hover,
+body.area-public .login-submit:hover,
+.account-help-card .btn-primary:hover { color:#fff; background:var(--action-red); }
+body.area-admin .nav a.nav-logout,
+body.area-voter .nav a.nav-logout { color:#fff; background:#625ee0; }
+body.area-admin .nav a.nav-logout:hover,
+body.area-voter .nav a.nav-logout:hover { color:#fff; background:var(--action-red); }
+.voter-info-help:hover,
+.voter-info-help:hover span,
+.account-help-link a:hover { color:var(--action-red); }
+.voter-stats.is-closed { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+/* Account recovery: verification, one-time passwords, and resolution notes. */
+.help-request-list { display:grid; gap:14px; }
+.help-request-card { display:grid; gap:12px; padding:20px; }
+.help-request-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.help-request-heading>div { display:grid; gap:3px; }
+.help-request-heading strong { color:#302e68; font-size:1rem; }
+.help-request-heading span:not(.badge) { color:#777993; font-size:.82rem; }
+.help-request-meta { display:flex; flex-wrap:wrap; gap:14px; color:#777993; font-size:.76rem; }
+.help-request-message,.help-resolution { margin:0; color:#555574; font-size:.84rem; }
+.help-match { margin:0; padding:10px 12px; border-radius:10px; font-size:.79rem; }
+.help-match.is-matched { color:#276b50; background:#eaf7f0; }
+.help-match.is-unmatched { color:#8a5620; background:#fff5e3; }
+.help-request-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:16px; padding-top:12px; border-top:1px solid #eeedf6; }
+.help-issue-form,.help-reject-form { align-content:start; }
+.verify-check { display:flex!important; align-items:flex-start; gap:8px; color:#48476f; font-size:.78rem; }
+.verify-check input { flex:0 0 auto; width:auto!important; margin-top:3px; }
+.temp-password-once { margin-bottom:18px; border:1px solid #d9d6fa; background:#f4f3ff; }
+.temp-password-once h2 { margin-top:0; color:#302e68; }
+.temp-password-copy { display:flex; flex-wrap:wrap; gap:8px; }
+.temp-password-copy input { width:min(100%,360px); padding:11px 13px; border:1px solid #d7d5ec; border-radius:10px; color:#302e68; background:#fff; font:700 1rem ui-monospace,monospace; letter-spacing:.06em; }
+@media(max-width:760px) { .help-request-actions { grid-template-columns:1fr; } }
+
+/* Voter dashboard open-ballot and completed-ballot states. */
+.voter-welcome { min-height:0; margin-bottom:12px; padding:16px 20px; border-radius:12px; background:#fff; }
+.voter-welcome h1 { font-size:1.8rem; letter-spacing:-.035em; }
+.voter-eyebrow { margin-bottom:4px; font-size:.64rem; }
+.voter-subtitle { margin-top:4px; font-size:.78rem; }
+.voter-ready-banner { display:flex; align-items:center; justify-content:space-between; gap:22px; margin-bottom:12px; padding:18px 20px; border:1px solid #dedcf8; border-radius:14px; color:#312e71; background:#f0efff; }
+.voter-ready-copy { min-width:0; }
+.voter-ready-tag { display:inline-block; padding:4px 12px; border-radius:999px; color:#fff; background:#716ce1; font-size:.62rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+.voter-ready-copy h2 { margin:8px 0 3px; color:#302e68; font-size:1.1rem; }
+.voter-ready-copy p { margin:0; color:#6f6e98; font-size:.76rem; }
+.voter-ready-actions { display:flex; align-items:center; gap:12px; margin-top:10px; }
+.voter-ready-actions .btn { min-height:34px; padding:8px 20px; font-size:.72rem; }
+.voter-ready-actions small { color:#777993; font-size:.65rem; }
+.voter-ready-countdown { display:grid; flex:0 0 auto; gap:2px; text-align:center; }
+.voter-ready-countdown small,.voter-ready-countdown span { color:#7774b5; font-size:.6rem; font-weight:700; text-transform:uppercase; }
+.voter-ready-countdown strong { color:#7068df; font-size:2rem; line-height:1.1; }
+.voter-ready-banner.is-upcoming,.voter-ready-banner.is-ended { min-height:105px; }
+.voter-ready-banner.is-ended { background:#f5f4fc; }
+.voter-summary-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
+.voter-summary-stats article { display:grid; align-content:center; gap:3px; min-width:0; min-height:66px; padding:10px 13px; border:1px solid #e7e6f1; border-left:4px solid #7773ed; border-radius:10px; background:#fff; }
+.voter-summary-stats article small { color:#777993; font-size:.6rem; }
+.voter-summary-stats article strong { overflow:hidden; color:#2d2b68; font-size:.94rem; text-overflow:ellipsis; white-space:nowrap; }
+.voter-summary-stats article span { color:#777993; font-size:.6rem; }
+.voter-summary-stats.is-complete { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.is-complete-columns { grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:12px; }
+.is-complete-columns .voter-panel,.voter-panel { padding:16px 18px; border-radius:12px; }
+.voter-panel-heading { margin-bottom:8px; }
+.voter-panel-heading>div { display:grid; gap:2px; }
+.voter-panel-heading small { color:#777993; font-size:.67rem; }
+.voter-panel-continue { color:#716ce1; font-size:.69rem; font-weight:700; }
+.voter-ballot-row { min-height:42px; padding:8px 0; }
+.voter-ballot-row strong { font-size:.76rem; }
+.voter-ballot-row small { font-size:.63rem; }
+.voter-position-state { min-width:80px; padding:5px 10px; text-align:center; font-size:.62rem; }
+.voter-info-row { padding:8px 0; font-size:.72rem; }
+.voter-election-description,.voter-info-help { font-size:.69rem; }
+.voter-receipt-summary { display:grid; grid-template-columns:38px minmax(0,1fr) minmax(150px,.75fr); align-items:center; gap:12px; margin-bottom:12px; padding:15px; border:1px solid #dcd9fa; border-radius:12px; background:#f1f0ff; }
+.voter-receipt-check { display:grid; place-items:center; width:36px; height:36px; border-radius:50%; color:#fff; background:#716ce1; font-size:1.2rem; font-weight:800; }
+.voter-receipt-main h2 { margin:0 0 3px; color:#4e49b6; font-size:.95rem; }
+.voter-receipt-main p,.voter-receipt-privacy { margin:0 0 8px; color:#6d6b98; font-size:.65rem; line-height:1.45; }
+.voter-receipt-main label { display:block; margin-bottom:3px; color:#7773b7; font-size:.56rem; font-weight:800; text-transform:uppercase; }
+.voter-receipt-copy { display:flex; gap:6px; }
+.voter-receipt-copy input { width:min(100%,220px); min-width:0; padding:7px 9px; border:1px solid #d9d7ed; border-radius:6px; color:#302e68; background:#fff; font:700 .65rem ui-monospace,monospace; letter-spacing:.04em; }
+.voter-copy-btn { padding:7px 10px; border-radius:6px; color:#fff; background:#716ce1; font-size:.61rem; }
+.voter-copy-btn:hover { color:#fff; background:#5d58d1; }
+.voter-receipt-privacy { margin:0; padding-left:10px; border-left:1px solid #d8d5f0; }
+.voter-ballot-status h2,.voter-results-status h2 { margin:0 0 8px; color:#302e68; font-size:.78rem; }
+.voter-completion-count { display:block; color:#716ce1; font-size:1.55rem; line-height:1.1; }
+.voter-ballot-status>b { color:#373574; font-size:.68rem; }
+.voter-ballot-status p,.voter-results-status p { margin:7px 0 0; color:#777993; font-size:.63rem; line-height:1.45; }
+.voter-results-pill { display:inline-block; padding:4px 10px; border-radius:999px; color:#777993; background:#efeff7; font-size:.58rem; }
+.voter-results-status>a { display:inline-block; margin-top:8px; color:#625ed0; font-size:.7rem; font-weight:700; }
+.voter-results-skeleton { display:grid; gap:6px; margin-top:14px; }
+.voter-results-skeleton i { display:block; width:100%; height:6px; border-radius:99px; background:#e7e6f3; }
+.voter-results-skeleton i:nth-child(2) { width:72%; }.voter-results-skeleton i:nth-child(3) { width:86%; }
+.election-card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+@media(max-width:760px) {
+  .voter-ready-banner { align-items:flex-start; }
+  .voter-ready-countdown strong { font-size:1.55rem; }
+  .voter-summary-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .voter-receipt-summary { grid-template-columns:38px minmax(0,1fr); }
+  .voter-receipt-privacy { grid-column:2; padding:0; border:0; }
+}
+@media(max-width:520px) {
+  .voter-ready-banner { flex-direction:column; }
+  .voter-ready-countdown { align-self:flex-end; }
+  .voter-summary-stats.is-complete { grid-template-columns:1fr; }
+  .is-complete-columns { grid-template-columns:1fr; }
+  .voter-receipt-copy input { width:100%; }
+}
  

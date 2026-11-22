@@ -74,6 +74,14 @@ function ensure_feature_schema(PDO $pdo): void
         $pdo->exec('ALTER TABLE votes ADD UNIQUE KEY uq_one_vote_per_position (voter_id, position_id)');
     }
 
+    $voterColumns = array_column($pdo->query('SHOW COLUMNS FROM voters')->fetchAll(), 'Field');
+    if (!in_array('must_change_password', $voterColumns, true)) {
+        $pdo->exec('ALTER TABLE voters ADD COLUMN must_change_password TINYINT(1) NOT NULL DEFAULT 0');
+    }
+    if (!in_array('temporary_password_expires_at', $voterColumns, true)) {
+        $pdo->exec('ALTER TABLE voters ADD COLUMN temporary_password_expires_at DATETIME NULL');
+    }
+
     $receiptsExisted = (bool)$pdo->query("SHOW TABLES LIKE 'participation_receipts'")->fetchColumn();
     $pdo->exec("CREATE TABLE IF NOT EXISTS participation_receipts (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -108,11 +116,39 @@ function ensure_feature_schema(PDO $pdo): void
         phone VARCHAR(30) NULL,
         reason VARCHAR(80) NOT NULL,
         message TEXT NULL,
-        status ENUM('open','resolved') NOT NULL DEFAULT 'open',
+        status ENUM('open','resolved','rejected') NOT NULL DEFAULT 'open',
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         resolved_at DATETIME NULL,
+        voter_id INT UNSIGNED NULL,
+        identity_verified_at DATETIME NULL,
+        identity_verified_by INT UNSIGNED NULL,
+        verification_method VARCHAR(20) NULL,
+        temp_password_issued_at DATETIME NULL,
+        temp_password_issued_by INT UNSIGNED NULL,
+        resolved_by INT UNSIGNED NULL,
+        resolution_reason VARCHAR(255) NULL,
         INDEX idx_help_status_created (status, created_at)
     ) ENGINE=InnoDB");
+
+    $helpColumns = $pdo->query('SHOW COLUMNS FROM account_help_requests')->fetchAll();
+    $helpColumnNames = array_column($helpColumns, 'Field');
+    $helpAdditions = [
+        'voter_id' => 'ALTER TABLE account_help_requests ADD COLUMN voter_id INT UNSIGNED NULL',
+        'identity_verified_at' => 'ALTER TABLE account_help_requests ADD COLUMN identity_verified_at DATETIME NULL',
+        'identity_verified_by' => 'ALTER TABLE account_help_requests ADD COLUMN identity_verified_by INT UNSIGNED NULL',
+        'verification_method' => 'ALTER TABLE account_help_requests ADD COLUMN verification_method VARCHAR(20) NULL',
+        'temp_password_issued_at' => 'ALTER TABLE account_help_requests ADD COLUMN temp_password_issued_at DATETIME NULL',
+        'temp_password_issued_by' => 'ALTER TABLE account_help_requests ADD COLUMN temp_password_issued_by INT UNSIGNED NULL',
+        'resolved_by' => 'ALTER TABLE account_help_requests ADD COLUMN resolved_by INT UNSIGNED NULL',
+        'resolution_reason' => 'ALTER TABLE account_help_requests ADD COLUMN resolution_reason VARCHAR(255) NULL',
+    ];
+    foreach ($helpAdditions as $column => $sql) {
+        if (!in_array($column, $helpColumnNames, true)) $pdo->exec($sql);
+    }
+    $statusColumn = array_values(array_filter($helpColumns, static fn(array $column): bool => $column['Field'] === 'status'))[0] ?? null;
+    if ($statusColumn && !str_contains((string)$statusColumn['Type'], "'rejected'")) {
+        $pdo->exec("ALTER TABLE account_help_requests MODIFY COLUMN status ENUM('open','resolved','rejected') NOT NULL DEFAULT 'open'");
+    }
     $done = true;
 }
 
@@ -220,6 +256,10 @@ function require_voter(): array
     if (!$voter) {
         flash('error', 'Please log in as a voter to continue.');
         redirect('index.php?tab=voter-login');
+    }
+    if (!empty($voter['must_change_password']) && basename($_SERVER['SCRIPT_NAME'] ?? '') !== 'change_password.php') {
+        flash('info', 'Set a new password before continuing to your voter account.');
+        redirect('auth/change_password.php');
     }
     return $voter;
 }

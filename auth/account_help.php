@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/layout.php';
 
-$reasons = ['Forgot password', 'Need a new sign-in code', 'Account details changed', 'Other access problem'];
+$reasons = ['Forgot password', 'Request a temporary password', 'Account details changed', 'Other access problem'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify('auth/account_help.php');
     $name = trim($_POST['full_name'] ?? '');
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             db()->prepare('INSERT INTO account_help_requests (full_name, email, phone, reason, message) VALUES (?, ?, ?, ?, ?)')
                 ->execute([$name, $email, $phone ?: null, $reason, $message ?: null]);
-            flash('success', 'Your request was sent to the election administrator. They will contact you at the email you provided.');
+            flash('success', 'Your request was sent to the election administrator. They will verify your details and contact you through a trusted channel.');
             redirect('auth/account_help.php?sent=1');
         }
     }
@@ -32,7 +32,7 @@ render_head('Account help', 'public');
 <section class="auth-card account-help-card">
     <p class="eyebrow">Voter support</p>
     <h1>Need help signing in?</h1>
-    <p class="muted">Request access help or a new sign-in code. The administrator will contact you using the details below.</p>
+    <p class="muted">Request access help. After verifying your identity against the voter register or by phone, the administrator can issue a one-time temporary password. It is delivered outside this site.</p>
     <form method="post" class="form">
         <?= csrf_field() ?>
         <label>Full name<input type="text" name="full_name" required minlength="2" maxlength="120" autocomplete="name" value="<?= e($_POST['full_name'] ?? '') ?>"></label>

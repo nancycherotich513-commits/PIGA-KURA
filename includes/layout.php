@@ -8,10 +8,10 @@ function nav_items(string $area): array
     if ($area === 'voter') {
         return [
             ['Dashboard', 'voter/dashboard.php'],
-            ['My ballot', 'voter/dashboard.php#ballot'],
-            ['Receipts', 'voter/dashboard.php#receipts'],
-            ['Results', 'voter/dashboard.php#results'],
-            ['Election info', 'voter/dashboard.php#election-info'],
+            ['My ballot', 'voter/ballot.php'],
+            ['Receipts', 'voter/receipts.php'],
+            ['Results', 'voter/results.php'],
+            ['Election info', 'voter/election_info.php'],
             ['Account help', 'auth/account_help.php'],
         ];
     }
@@ -22,6 +22,7 @@ function nav_items(string $area): array
             ['Positions', 'admin/positions.php'],
             ['Candidates', 'admin/candidates.php'],
             ['Voters', 'admin/voters.php'],
+            ['Results', 'admin/results_list.php'],
             ['Audit log', 'admin/audit.php'],
             ['Account help', 'admin/help.php'],
             ['Data safety', 'admin/backup.php'],
